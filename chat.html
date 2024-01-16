@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+            display: flex;
+            height: 100vh;
+        }
+
+        #app {
+            flex: 1;
+            display: flex;
+        }
+
+        #user-list {
+            width: 330px;
+            background-color: #c91b51;
+            /* background-color: #d4dd27d1; */
+            color: #fff;
+            padding: 0 20px 0 0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .navbar-left-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f1eeee;
+            /* background-color: #d4dd27d1; */
+            /* color: #c91b51; */
+            padding: 10px;
+            height: 5.5%;
+            width: 350px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-right-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #e9e5e0;
+            color: #c91b51;
+            height: 5.5%;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-right-span {
+            display: flex;
+            align-items: center; 
+        }
+
+
+        #chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            /* padding: 20px; */
+            overflow-y: auto;
+            background-color: #fff
+        }
+
+        
+
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .message-box {
+            background-color: #3498db;
+            color: #fff;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            margin-left: 10px;
+            min-width: 70%;
+            word-wrap: break-word;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+            padding: 10px;
+            min-height: 40px; /* Set a minimum height as needed */
+        }
+
+        .message-box span {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .message-box p {
+            margin: 0;
+            padding: 12px;
+        }
+
+
+        /* .message-box::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -10px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent transparent transparent #3498db;
+        } */
+
+        #input-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #chat-search-container {
+            display: flex;
+            /* display: inline-block; */
+            justify-content: space-between;
+            width: 800px;
+            align-items: center;
+            padding: 10px;
+            margin-left: 40px;
+            background-color: #fff;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        #chat-search-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        #send-button {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* ul {
+            list-style-type: none;
+            padding: 0;
+        } */
+
+        .users, .groups {
+            list-style-type: none;
+            padding: 0px;
+            width: 100%
+        }
+
+        .users span {
+            display: block;	  
+            color: #fff; 
+            padding: 5px; 
+            text-decoration: none; 
+            font-size : 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .users span:hover{
+            background-color: #775b61;
+        }
+
+
+        .selected{
+            background-color: pink;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="user-list">
+            <div class="navbar-left-container">
+                <div id="left-navbar">
+                    <!-- Left panel navigation items (e.g., profile picture, search icon, etc.) -->
+                    <!-- <a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by Becris - Flaticon</a> -->
+                    <img src="user.png" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; margin-bottom: 10px;">
+                    <img src="create-group.png" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; padding-left: 30px; margin-bottom: 10px;">
+                    <img src="search.png" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; padding-left: 10px; margin-bottom: 10px;">
+                    <img src="menu.png" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; padding-left: 70px; margin-bottom: 10px;">
+                </div>
+            </div>
+            <div>
+                <ul class="users">
+                    <li><h3># Users</h3></li>
+                    <li><div onclick="selectItem(this)"><span>User 1</span></div></li>
+                    <li><div onclick="selectItem(this)"><span>User 2</span></div></li>
+                    <li><div onclick="selectItem(this)"><span>User 3</span></div></li>
+                    <li><h3># Groups</h3></li>
+                    <li><div onclick="selectItem(this)"><span>Group 1</span></div></li>
+                    <li><div onclick="selectItem(this)"><span>Group 2</span></div></li>
+                    <li><div onclick="selectItem(this)"><span>Group 3</span></div></li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="chat-container">
+            <div class="navbar-right-container">
+                <div id="right-navbar">
+                    <!-- Right panel navigation items (e.g., currently open chat, search icon, etc.) -->
+                    <span class="nav-right-span">
+                        <img src="user.png" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; margin-bottom: 10px;">
+                        <div id="chat-search-container">
+                            <input type="text" id="chat-search-input" placeholder="Chat Search ....">
+                            <!-- <button id="send-button" onclick="sendMessage()">Send</button> -->
+                        </div>
+                    </span>
+                    <!-- <div id="input-container">
+                        <input type="text" id="message-input" placeholder="Type your message...">
+                        <button id="send-button" onclick="sendMessage()">Send</button>
+                    </div> -->
+                </div>
+            </div>
+            <div id="chat-messages"></div>
+
+            <div id="input-container">
+                <textarea type="text" id="message-input" placeholder="Type your message..."></textarea>
+                <button id="send-button" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        var messageInput = document.getElementById("message-input");
+
+        messageInput.addEventListener("keydown", function(event) {
+            // Check if the pressed key is Enter (key code 13) and Shift key is not pressed
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault(); // Prevent the default behavior (newline in textarea)
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            var messageInput = document.getElementById('message-input');
+            // var message = messageInput.value.trim();
+            var message = messageInput.value.replace(/\n/g, '<br>').trim();
+            
+            if (message !== '') {
+                var chatMessages = document.getElementById('chat-messages');
+                var newMessage = document.createElement('div');
+                newMessage.className = 'message-box';
+                newMessage.innerHTML = '<span>User:</span><p>' + message + '</p>';
+                chatMessages.appendChild(newMessage);
+
+                // Clear the input field
+                messageInput.value = '';
+
+                // Scroll to the bottom of the chat messages
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        function selectItem(clickedItem) {
+            // Get the parent ul element
+            // var parentList = clickedItem.parentNode;
+
+            // Check if there's an element with the "selected" class
+            var activeElement = document.querySelector('.selected');
+            console.log(activeElement, "***************************")
+
+            // If found, remove the "selected" class
+            if (activeElement) {
+                activeElement.classList.remove("selected");
+            }
+
+            // Add the "selected" class to the clicked li element
+            clickedItem.classList.add("selected");
+        }
+    </script>
+</body>
+</html>
