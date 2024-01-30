@@ -1,0 +1,321 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+    display: flex;
+    height: 100vh;
+}
+
+#app {
+    flex: 1;
+    display: flex;
+}
+
+#user-list {
+    width: 330px;
+    background-color: #8e44ad;
+    /* background: linear-gradient(to bottom, #c3a1e7, #8e44ad, #5a2a80); */
+    /* background-color: #c91b51; */
+    /* background-color: #3498db; */
+    /* background-color: #d4dd27d1; */
+    color: #fff;
+    padding: 0 20px 0 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+.navbar-left-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f1eeee;
+    /* background-color: #d4dd27d1; */
+    /* color: #c91b51; */
+    padding: 10px;
+    height: 5.5%;
+    width: 350px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-right-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e9e5e0;
+    color: #c91b51;
+    /* color: #3498db; */
+    height: 5.5%;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-right-span {
+    display: flex;
+    align-items: center; 
+}
+
+
+#chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* padding: 20px; */
+    overflow-y: auto;
+    background-color: #fff
+}
+
+
+
+#chat-messages {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.message-box {
+    /* background-color: #3498db; */
+    /* background-color: #c91b51; */
+    background-color: #b588e5;
+    /* background: linear-gradient(to bottom, #c3a1e7, #8e44ad, #5a2a80); */
+    color: #fff;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    margin-left: 10px;
+    min-width: 70%;
+    word-wrap: break-word;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: inline-block;
+    padding: 10px;
+    min-height: 40px; /* Set a minimum height as needed */
+}
+
+.message-box span {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.message-box p {
+    margin: 0;
+    padding: 12px;
+}
+
+
+/* .message-box::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent transparent #3498db;
+} */
+
+#input-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#chat-search-container {
+    display: flex;
+    /* display: inline-block; */
+    justify-content: space-between;
+    width: 800px;
+    align-items: center;
+    padding: 10px;
+    margin-left: 40px;
+    background-color: #fff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#message-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+#chat-search-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+#send-button {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* ul {
+    list-style-type: none;
+    padding: 0;
+} */
+
+.users, .groups {
+    list-style-type: none;
+    padding: 0px;
+    width: 100%
+}
+
+.users span {
+    display: block;	  
+    color: #fff; 
+    padding: 5px; 
+    text-decoration: none; 
+    font-size : 18px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.users span:hover{
+    background-color: #775b61;
+}
+
+
+.selected{
+    background-color: pink;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Tabs styles */
+.tab-container {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #3498db;
+    color: #fff;
+    border-radius: 5px 5px 0 0;
+    margin-right: 5px;
+}
+
+.tab.active {
+    background-color: #4CAF50;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Close button for the modal */
+.close-btn {
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 70px;
+}
+
+
+/* Styles for the enhanced search bar */
+.search-bar-enhanced {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+    font-size: 16px;
+    width: 95%
+}
+
+/* Styles for the "Create" button */
+#create-button {
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 20%
+}
+
+.group-name-input{
+    width: 60%;
+    height: 40px;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box; /* Include padding and border in the width calculation */
+}
+
+/* Styles for selected users */
+.selected-popup-users {
+    margin: 10px 0px 10px 0px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    width: 95%;
+    color: black;
+
+}
+
+.selected-popup-users span {
+    margin-right: 5px;
+}
+
+#selected-users-count {
+    font-weight: bold;
+}
+/* Styles for the user list */
+.users-popup-list ul {
+    list-style-type: none;
+    padding: 0;
+    max-height: 300px; /* Adjust the maximum height as needed */
+    overflow-y: auto;
+}
+
+.users-popup-list li {
+    cursor: pointer;
+    padding: 15px;
+    border-bottom: 1px solid #ccc;
+    transition: background-color 0.3s ease;
+    /* background-color: #3498db; */
+    background-color: #c91b51;
+}
+
+.users-popup-list li:hover {
+    border: 1px solid black
+}
+

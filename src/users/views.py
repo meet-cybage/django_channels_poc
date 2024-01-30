@@ -1,7 +1,8 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
 from allauth.account.views import LoginView, SignupView
-
+from users.models import User
 # Create your views here.
 
 class CustomLoginView(LoginView):
@@ -27,3 +28,10 @@ class CustomLoginView(LoginView):
 
 class CustomSignUpView(SignupView):
     template_name = "users/signup.html"
+
+
+class UsersView(View):
+
+    def get(self, request):
+        users = list(User.objects.values("id", "username", "first_name", "last_name"))
+        return JsonResponse(users, safe=False)

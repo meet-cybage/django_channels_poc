@@ -1,11 +1,72 @@
 {% load static %}
-<html>
-    <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <link rel="stylesheet" href="{% static 'css/chat_base.css' %}">
+</head>
+<body>
+    <div id="app">
+        <div id="user-list">
+            <div class="navbar-left-container">
+                <div id="left-navbar">
+                    <!-- Left panel navigation items (e.g., profile picture, search icon, etc.) -->
+                    <!-- <a href="https://www.flaticon.com/free-icons/user" title="user icons">User icons created by Becris - Flaticon</a> -->
+                    <img src="{% static 'images/user.png' %}" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; margin-bottom: 10px;">
+                    <img src="{% static 'images/create-group.png' %}" alt="Profile Picture" onclick="openModal(this)" data-user-url="{% url 'get_users' %}" style="width: 40px; height: 40px; border-radius: 50%; padding-left: 30px; margin-bottom: 10px;">
+                    <img src="{% static 'images/search.png' %}" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; padding-left: 10px; margin-bottom: 10px;">
+                    <img src="{% static 'images/menu.png' %}" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; padding-left: 70px; margin-bottom: 10px;">
+                </div>
+            </div>
+            <div>
+                <ul class="users">
+                    <li><h3># Users</h3></li>
+                    <li><div onclick="selectItem(this)"><span>User 1</span></div></li>
+                    <li><div onclick="selectItem(this)"><span>User 2</span></div></li>
+                    <li><div onclick="selectItem(this)"><span>User 3</span></div></li>
+                    <li><h3># Groups</h3></li>
+                    <li><div onclick="selectItem(this)"><span>Group 1</span></div></li>
+                    <li><div onclick="selectItem(this)"><span>Group 2</span></div></li>
+                    <li><div onclick="selectItem(this)"><span>Group 3</span></div></li>
+                </ul>
+            </div>
+            <!-- <a href="/accounts/logout">Logout</button> -->
+            <!-- Modal -->
+            <div id="myModal" class="modal">
+                
+            </div>
 
-    </head>
-    <body>
-        <h1>Successfully Logged In!!!!!</h1>
-        <a href="/accounts/logout">Logout</button>
-    </body>
+        </div>
+
+        <div id="chat-container">
+            <div class="navbar-right-container">
+                <div id="right-navbar">
+                    <!-- Right panel navigation items (e.g., currently open chat, search icon, etc.) -->
+                    <span class="nav-right-span">
+                        <img src="{% static 'images/user.png' %}" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; margin-bottom: 10px;">
+                        <div id="chat-search-container">
+                            <input type="text" id="chat-search-input" placeholder="Chat Search ....">
+                            <!-- <button id="send-button" onclick="sendMessage()">Send</button> -->
+                        </div>
+                    </span>
+                    <!-- <div id="input-container">
+                        <input type="text" id="message-input" placeholder="Type your message...">
+                        <button id="send-button" onclick="sendMessage()">Send</button>
+                    </div> -->
+                </div>
+            </div>
+            <div id="chat-messages"></div>
+
+            <div id="input-container">
+                <textarea type="text" id="message-input" placeholder="Type your message..."></textarea>
+                <button id="send-button" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/chat/chat_modal.js' %}"></script>
+    <script src="{% static 'js/chat/chat_base.js' %}"></script>
+</body>
 </html>
-
