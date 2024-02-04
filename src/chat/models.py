@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from commons.models import TimeBaseModel
+from chat.managers.chat_room_manager import ChatRoomManager
 
 
 User = get_user_model()
@@ -11,6 +12,9 @@ class ChatRoom(TimeBaseModel):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
+    room_associated_member = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+    objects = ChatRoomManager()
 
 
 class ChatGroup(TimeBaseModel):

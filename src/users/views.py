@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views import View
+from django.db.models import Q, F, Value, CharField
+from django.db.models.functions import Concat
 from allauth.account.views import LoginView, SignupView
 from users.models import User
 # Create your views here.
@@ -33,5 +35,7 @@ class CustomSignUpView(SignupView):
 class UsersView(View):
 
     def get(self, request):
-        users = list(User.objects.values("id", "username", "first_name", "last_name"))
-        return JsonResponse(users, safe=False)
+        users = User.objects.filter(
+            ~Q(id=request.user.id), ~Q(is_superuser=True)
+        ).annotate(full_name=Concat(F("first_name"), Value(" "), F("last_name"), output_field=CharField())).values("id", "username", "full_name")
+        return JsonResponse(list(users), safe=False)
