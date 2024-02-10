@@ -67,7 +67,7 @@ async function openModal(ele) {
                     <span id="selected-users-count">0</span> users selected
                 </div>
         
-                <input type="text" class="group-name-input" placeholder="Enter group name...">
+                <input type="text" class="group-name-input" id="groupName" placeholder="Enter group name...">
                 <button id="create-button" onclick="createGroup()">Create</button>
         
         
@@ -121,13 +121,10 @@ function getCookie(name) {
     return cookieValue;
 }
 
-async function createChatRoom(users, roomType){
+async function createChatRoom(data){
     try {
         const url = "/chat/create/room"
-        const data = {
-            "users": users,
-            "room_type": roomType
-        }
+        
         const dataString = JSON.stringify(data);
         // const csrfToken = await generateCSRFToken(dataString)
         const csrfToken = getCookie('csrftoken');
@@ -167,7 +164,11 @@ function addNewUserElement(listType, resData){
 
 async function createUserChatRoom(ele) {
     user = ele.getAttribute("data-userId")
-    const resData = await createChatRoom(user, "user")
+    const data = {
+        "users": user,
+        "room_type": "Users"
+    }
+    const resData = await createChatRoom(data)
     closeModal();
 
     addNewUserElement("Users", resData);
@@ -191,13 +192,30 @@ function changeTab(tabIndex) {
     tabs[tabIndex].classList.add('active');
 }
 
-function createGroup() {
+async function createGroup() {
     // Retrieve selected users
     var selectedUsers = document.querySelectorAll('#users-popup-list-create-group input:checked');
+    var groupName = document.getElementById('groupName').value
 
     // Display the count of selected users
     var selectedUsersCount = document.getElementById('selected-users-count');
     selectedUsersCount.innerText = selectedUsers.length;
+
+    let userIds= []
+    selectedUsers.forEach(user => userIds.push(user.getAttribute("data-userId")))
+
+    const data = {
+        "users": userIds,
+        "room_type": "Groups",
+        "group_name": groupName
+    }
+
+    const resData = await createChatRoom(data)
+    debugger
+
+    closeModal();
+
+    // addNewUserElement("Groups", resData);
 
     // Display the selected users in the console (you can modify this logic)
     selectedUsers.forEach(user => console.log(user.nextElementSibling.innerText));
