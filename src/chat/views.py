@@ -1,4 +1,7 @@
 import json
+from django.db import transaction
+from django.db.models import Q, F, Value, CharField
+from django.db.models.functions import Concat
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import render
 from django.views import View
@@ -18,6 +21,7 @@ class ChatView(View):
 
 class ChatRoomView(View):
 
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         
@@ -60,9 +64,13 @@ class ChatRoomView(View):
                     chat_group_members.append(ChatGroupMembers(user_id=user_id, group_id=chat_group.id))
 
                 ChatGroupMembers.objects.bulk_create(chat_group_members, batch_size=50)
-                group_members = chat_group.chatgroupmembers_set.values("user__id", "user__username", "user__first_name")
             else:
-                chat_room = ChatRoom.objects.get(chat_room=chat_group)
-                chat_group_members = chat_group.chatgroupmembers_set.all()
-
-        return
+                chat_room = ChatRoom.objects.get(content_type=content_type, object_id=chat_group.id)
+            chat_group_members = chat_group.chatgroupmembers_set.values(
+                "user__id", "user__username", "user__first_name", "user__last_name"
+                ).annotate(
+                    user_id=F("user_id"), username=F("user__username"), full_name=Concat(F("user__first_name"), Value(" "), F("user__last_name"))
+                ).values("user_id", "username", "full_name")
+            
+            data = {"room_id": chat_room.id, "group_id": chat_group.id, "group_name": chat_group.group_name, "group_members": list(chat_group_members)}
+        return JsonResponse(data)

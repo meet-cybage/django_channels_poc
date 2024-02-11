@@ -153,8 +153,15 @@ function addNewUserElement(listType, resData){
     // Find the li element with the text content "# Users"
     var usersLi = document.querySelector(`[data-type="${listType}"]`);
 
-    // Create the HTML string for the new li element
-    var newLiHTML = `<li><div data-room-id=${resData.room_id} data-user-id=${resData.user} onclick="selectItem(this)"><span>${resData.username} (${resData.full_name})</span></div></li>`;
+    if (listType == "Users"){
+        // Create the HTML string for the new li element
+        var newLiHTML = `<li><div data-room-id=${resData.room_id} data-user-id=${resData.user} onclick="selectItem(this)"><span>${resData.username} (${resData.full_name})</span></div></li>`;
+    }
+    else{
+        // Create the HTML string for the new li element
+    var newLiHTML = `<li><div data-room-id=${resData.room_id} data-group-id=${resData.group_id} onclick="selectItem(this)"><span>${resData.group_name}</span></div></li>`;
+    }
+    
 
     // Insert the new li element after the # Users li element
     usersLi.insertAdjacentHTML('afterend', newLiHTML);
@@ -211,8 +218,7 @@ async function createGroup() {
     }
 
     const resData = await createChatRoom(data)
-    debugger
-
+    addNewUserElement("Groups", resData);
     closeModal();
 
     // addNewUserElement("Groups", resData);
