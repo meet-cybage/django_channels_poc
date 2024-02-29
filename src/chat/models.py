@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from chat.managers.chat_group_manager import ChatGroupManager
+from chat.managers.chat_message_manager import ChatMessageManager
 from commons.models import TimeBaseModel
 from chat.managers.chat_room_manager import ChatRoomManager
 
@@ -35,3 +36,5 @@ class ChatMesssage(TimeBaseModel):
     message = models.TextField()
     chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    objects = ChatMessageManager()

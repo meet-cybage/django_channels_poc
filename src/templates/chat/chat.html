@@ -20,8 +20,9 @@
                     <img src="{% static 'images/menu.png' %}" alt="Profile Picture" style="width: 40px; height: 40px; border-radius: 50%; padding-left: 70px; margin-bottom: 10px;">
                 </div>
             </div>
-            <div>
-                <ul class="users">
+            <div id="usersAndGroups" data-url="{% url 'chat_users_and_groups' %}">
+                
+                <!-- <ul class="users">
                     <li data-type="Users"><h3># Users</h3></li>
                     <li><div onclick="selectItem(this)"><span>User 1</span></div></li>
                     <li><div onclick="selectItem(this)"><span>User 2</span></div></li>
@@ -30,7 +31,7 @@
                     <li><div onclick="selectItem(this)"><span>Group 1</span></div></li>
                     <li><div onclick="selectItem(this)"><span>Group 2</span></div></li>
                     <li><div onclick="selectItem(this)"><span>Group 3</span></div></li>
-                </ul>
+                </ul> -->
             </div>
             <!-- <a href="/accounts/logout">Logout</button> -->
             <!-- Modal -->
@@ -65,7 +66,7 @@
             </div>
         </div>
     </div>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{% static 'js/chat/chat_modal.js' %}"></script>
     <script src="{% static 'js/chat/chat_base.js' %}"></script>
 </body>

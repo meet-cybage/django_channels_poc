@@ -5,8 +5,8 @@ class ChatRoomQuerySet(QuerySet):
 
     def get_user_room(self, content_type, user_1, user_2):
         return self.filter(
-            Q(content_type= content_type, object_id=user_1, room_associated_member_id=user_2) |
-            Q(content_type= content_type, object_id=user_2, room_associated_member_id=user_1)
+            Q(content_type=content_type, object_id=user_1, room_associated_member_id=user_2) |
+            Q(content_type=content_type, object_id=user_2, room_associated_member_id=user_1)
         )
 
 

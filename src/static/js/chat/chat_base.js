@@ -27,3 +27,21 @@ function sendMessage() {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 }
+
+$(document).ready(function() {
+
+    var ele = document.getElementById("usersAndGroups")
+    var url = ele.getAttribute("data-url")
+
+    $.ajax({                       
+        url: url,
+        // data: {
+        //   'country': countryId
+        // },
+        success: function (data) { 
+
+            debugger
+            // $("#usersAndGroups").html(data);
+        }
+    });
+});

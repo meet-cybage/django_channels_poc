@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse, JsonResponse
 from users.models import User
-from chat.models import ChatGroup, ChatGroupMembers, ChatRoom
+from chat.models import ChatGroup, ChatGroupMembers, ChatMesssage, ChatRoom
 
 # Create your views here.
 
@@ -74,3 +74,13 @@ class ChatRoomView(View):
             
             data = {"room_id": chat_room.id, "group_id": chat_group.id, "group_name": chat_group.group_name, "group_members": list(chat_group_members)}
         return JsonResponse(data)
+
+
+class ChatUsersAndGroups(View):
+
+    def get(self, request, *args, **kwargs):
+        user_content_type = ContentType.objects.get_for_model(User)
+        group_content_type = ContentType.objects.get_for_model(ChatGroup)
+        # users = User.objects.all()
+        users = ChatMesssage.objects.get_chat_message_users(user_content_type, request.user.id)
+        return render(request, "chat/chat_users_and_groups.html", context={"users": users})
