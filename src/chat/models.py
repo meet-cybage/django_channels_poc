@@ -21,7 +21,7 @@ class ChatRoom(TimeBaseModel):
 
 class ChatGroup(TimeBaseModel):
     group_name = models.CharField(max_length=50, null=True, blank=True)
-    user = models.ManyToManyField(User, through="ChatGroupMembers")
+    group_members = models.ManyToManyField(User, through="ChatGroupMembers")
     chat_room = GenericRelation(ChatRoom, related_query_name='group_room')
 
     objects = ChatGroupManager()
@@ -36,5 +36,8 @@ class ChatMesssage(TimeBaseModel):
     message = models.TextField()
     chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    # Add a GenericRelation to the related model
+    content_object_relation = GenericRelation(ChatRoom)
 
     objects = ChatMessageManager()

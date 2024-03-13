@@ -81,6 +81,11 @@ class ChatUsersAndGroups(View):
     def get(self, request, *args, **kwargs):
         user_content_type = ContentType.objects.get_for_model(User)
         group_content_type = ContentType.objects.get_for_model(ChatGroup)
-        # users = User.objects.all()
-        users = ChatMesssage.objects.get_chat_message_users(user_content_type, request.user.id)
+        users = User.objects.all()
+        models = {
+            "chat_group": ChatGroup,
+            "chat_group_members": ChatGroupMembers
+        }
+        # users_data = ChatMesssage.objects.get_chat_message_users(user_content_type, request.user.id)
+        groups_data = ChatMesssage.objects.get_chat_message_groups(group_content_type, request.user.id, models)
         return render(request, "chat/chat_users_and_groups.html", context={"users": users})
