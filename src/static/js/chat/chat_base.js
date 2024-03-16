@@ -35,13 +35,32 @@ $(document).ready(function() {
 
     $.ajax({                       
         url: url,
-        // data: {
-        //   'country': countryId
-        // },
         success: function (data) { 
+            var userDetailsTags = ""
+            var groupDetailsTags = ""
 
-            debugger
-            // $("#usersAndGroups").html(data);
+            data.users_data.forEach(ele => {
+                if (ele.room_user_full_name != " ") {
+                    userDetailsTags += `<li><div data-room-id=${ele.chat_room_id} data-user-id=${ele.room_user_id} onclick="selectItem(this)"><span>${ele.room_username}(${ele.room_user_full_name})</span></div></li>`
+                }
+                else{
+                    userDetailsTags += `<li><div data-room-id=${ele.chat_room_id} data-user-id=${ele.room_user_id} onclick="selectItem(this)"><span>${ele.room_username}</span></div></li>`
+                }
+            });
+
+            data.groups_data.forEach(ele => {
+                groupDetailsTags += `<li><div data-room-id=${ele.chat_room_id} data-group-id=${ele.group_id} onclick="selectItem(this)"><span>${ele.group_name}</span></div></li>`
+            });
+            
+            var html = `
+                <ul class="users">
+                <li data-type="Users"><h3># Users</h3></li>
+                ${userDetailsTags}
+                <li data-type="Groups"><h3># Groups</h3></li>
+                ${groupDetailsTags}
+                </ul>
+            `
+            $("#usersAndGroups").html(html);
         }
     });
 });

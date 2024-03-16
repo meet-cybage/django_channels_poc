@@ -10,6 +10,15 @@ from chat.managers.chat_room_manager import ChatRoomManager
 
 User = get_user_model()
 # Create your models here.
+
+class ChatGroup(TimeBaseModel):
+    group_name = models.CharField(max_length=50, null=True, blank=True)
+    group_members = models.ManyToManyField(User, through="ChatGroupMembers")
+    chat_room = GenericRelation("ChatRoom", related_query_name='group_room')
+
+    objects = ChatGroupManager()
+
+
 class ChatRoom(TimeBaseModel):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -17,14 +26,6 @@ class ChatRoom(TimeBaseModel):
     room_associated_member = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     objects = ChatRoomManager()
-
-
-class ChatGroup(TimeBaseModel):
-    group_name = models.CharField(max_length=50, null=True, blank=True)
-    group_members = models.ManyToManyField(User, through="ChatGroupMembers")
-    chat_room = GenericRelation(ChatRoom, related_query_name='group_room')
-
-    objects = ChatGroupManager()
 
 
 class ChatGroupMembers(TimeBaseModel):

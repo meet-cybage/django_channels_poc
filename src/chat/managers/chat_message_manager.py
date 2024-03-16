@@ -1,4 +1,5 @@
 from collections import defaultdict
+from django.db.models.functions import Concat
 from django.db.models import Manager, QuerySet, Q, Case, When, Value, F, IntegerField, Subquery, OuterRef, JSONField, Func
 from users.models import User
 
@@ -22,14 +23,20 @@ class ChatMessageQuerySet(QuerySet):
             )
         ).values("room_user_id", "chat_room_id", "message").distinct().order_by('-created_at')
 
-        user_subquery = User.objects.filter(id=OuterRef('room_user_id')).values('username', 'first_name', 'last_name')
+        # user_subquery = User.objects.filter(id=OuterRef('room_user_id')).values("username", "first_name", "last_name")
+        user_subquery = User.objects.filter(id=OuterRef('room_user_id')).annotate(full_name=Concat(F("first_name"), Value(" "), F("last_name"))).values('username', 'full_name')
 
         # Final queryset to fetch the desired data
+        # results = chat_message_queryset.annotate(
+        #     room_username=Subquery(user_subquery.values('username')[:1]),
+        #     room_user_first_name=Subquery(user_subquery.values('first_name')[:1]),
+        #     room_user_last_name=Subquery(user_subquery.values('last_name')[:1]),
+        # ).values('chat_room_id', 'room_user_id', 'room_username', 'room_user_first_name', 'room_user_last_name', 'message')
+
         results = chat_message_queryset.annotate(
             room_username=Subquery(user_subquery.values('username')[:1]),
-            room_user_first_name=Subquery(user_subquery.values('first_name')[:1]),
-            room_user_last_name=Subquery(user_subquery.values('last_name')[:1]),
-        ).values('chat_room_id', 'room_user_id', 'room_username', 'room_user_first_name', 'room_user_last_name', 'message')
+            room_user_full_name=Subquery(user_subquery.values('full_name')[:1]),
+        ).values('chat_room_id', 'room_user_id', 'room_username', 'room_user_full_name', 'message')
 
         return results
     
@@ -37,8 +44,9 @@ class ChatMessageQuerySet(QuerySet):
         chat_group_members = models.get("chat_group_members")
         user_group_ids = chat_group_members.objects.filter(user_id=user_id).values_list("group_id", flat=True).distinct()
         chat_messages = self.filter(chat_room__content_type=content_type, chat_room__object_id__in=user_group_ids).annotate(
-                            group_id=F("chat_room__object_id")
-                        ).values("chat_room_id", "group_id", "message")
+                            group_id=F("chat_room__object_id"),
+                            group_name=F("chat_room__group_room__group_name")
+                        ).values("chat_room_id", "group_id", "group_name", "message")
         
     
         group_members = chat_group_members.objects.filter(group_id__in=user_group_ids).select_related('user')
@@ -49,9 +57,9 @@ class ChatMessageQuerySet(QuerySet):
         # Populate the user details dictionary
         for member in group_members:
             user_details_map[member.group_id].append({
+                'user_id': member.user.id,
                 'username': member.user.username,
-                'first_name': member.user.first_name,
-                'last_name': member.user.last_name
+                'full_name': f"{member.user.first_name} {member.user.last_name}"
             })
 
         for message in chat_messages:
