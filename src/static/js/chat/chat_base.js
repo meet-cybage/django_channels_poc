@@ -15,16 +15,44 @@ function sendMessage() {
     
     if (message !== '') {
         var chatMessages = document.getElementById('chat-messages');
-        var newMessage = document.createElement('div');
-        newMessage.className = 'message-box';
-        newMessage.innerHTML = '<span>User:</span><p>' + message + '</p>';
-        chatMessages.appendChild(newMessage);
+        
 
-        // Clear the input field
-        messageInput.value = '';
+        var activeUserOrGroupElement = document.querySelector('.selected');
+        var roomId = activeUserOrGroupElement.getAttribute("data-room-id")
+        var userId = activeUserOrGroupElement.getAttribute("data-user-id")
+        var groupId = activeUserOrGroupElement.getAttribute("data-group-id")
+        var csrfToken = getCookie('csrftoken');
+        var data = {
+            "message": message,
+            "room_id": roomId,
+            "user_id": userId,
+            "group_id": groupId
+        }
+        $.ajax({
+            url: '/chat/messages',
+            type: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+             },
+            data: JSON.stringify(data),
+            success: function (data) {
+                var newMessage = document.createElement('div');
+                newMessage.className = 'message-box';
+                newMessage.setAttribute('data-room-id', data.room_id);
+                newMessage.innerHTML = '<span>User:</span><p>' + data.message + '</p>';
+                chatMessages.appendChild(newMessage);
 
-        // Scroll to the bottom of the chat messages
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+                // Clear the input field
+                messageInput.value = '';
+
+                // Scroll to the bottom of the chat messages
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            },
+            error: function (error) {
+                console.log(error)
+            }
+        })
     }
 }
 

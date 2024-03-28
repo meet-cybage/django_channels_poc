@@ -1,5 +1,7 @@
 from collections import defaultdict
 from django.db.models.functions import Concat
+from django.contrib.contenttypes.models import ContentType
+from django.apps import apps
 from django.db.models import Manager, QuerySet, Q, Case, When, Value, F, IntegerField, Subquery, OuterRef, JSONField, Func
 from users.models import User
 
@@ -65,7 +67,23 @@ class ChatMessageQuerySet(QuerySet):
         for message in chat_messages:
             message['user_details'] = user_details_map[message['group_id']]
         
-        return chat_messages        
+        return chat_messages
+
+    def create_chat_message(self, sender, data):
+        # group_id = data['group_id']
+
+        # if group_id:
+        #     chat_group_model = apps.get_model('chat', 'ChatGroup')
+        #     group_content_type = ContentType.objects.get_for_model(chat_group_model)
+        # else:
+        #     user_content_type = ContentType.objects.get_for_model(User)  
+
+        chat_message = self.create(
+            message=data.get("message"),
+            chat_room_id=data.get("room_id"),
+            sender_id=sender
+        )
+        return chat_message
 
 
 class ChatMessageManager(Manager):
@@ -78,3 +96,6 @@ class ChatMessageManager(Manager):
     
     def get_chat_message_groups(self, content_type, user_id, models):
         return self.get_queryset().get_chat_message_groups(content_type, user_id, models)
+    
+    def create_chat_message(self, sender, data):
+        return self.get_queryset().create_chat_message(sender, data)

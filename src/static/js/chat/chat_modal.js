@@ -88,6 +88,7 @@ function closeModal() {
     modal.innerHTML = ""
 }
 
+/* This is extra function */
 function selectItem(clickedItem) {
     // Get the parent ul element
     // var parentList = clickedItem.parentNode;
@@ -255,4 +256,17 @@ function selectItem(clickedItem) {
 
     // Add the "selected" class to the clicked li element
     clickedItem.classList.add("selected");
+    
+    var spanText = clickedItem.querySelector('span').innerText;
+
+    var existingSpan = document.querySelector('.nav-right-span');
+    var newElement = `<div id="userDiv" style="color: grey; padding-left=250px"><span style="font-size=25px"> ${spanText}</span></div>`
+    var imgElement = existingSpan.querySelector('img');
+    var existingNewElement = existingSpan.querySelector('#userDiv');
+
+    if (existingNewElement) {
+        existingNewElement.remove()
+    }
+    imgElement.insertAdjacentHTML('afterend', newElement);
+
 }

@@ -91,3 +91,12 @@ class ChatUsersAndGroups(View):
         data = {"users_data": list(users_data), "groups_data": list(groups_data)}
         return JsonResponse(data)
         # return render(request, "chat/chat_users_and_groups.html", context={"users": users})
+
+
+class ChatMessagesView(View):
+
+    def post(self, request, *args, **kwargs):
+        sender = request.user.id
+        data = json.loads(request.body)
+        chat_message = ChatMesssage.objects.create_chat_message(sender, data)
+        return JsonResponse({"message": chat_message.message, "sender": sender, "room_id": chat_message.chat_room.id})

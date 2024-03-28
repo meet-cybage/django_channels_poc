@@ -62,7 +62,7 @@
 
             <div id="input-container">
                 <textarea type="text" id="message-input" placeholder="Type your message..."></textarea>
-                <button id="send-button" onclick="sendMessage()">Send</button>
+                <button id="send-button" data-url="{% url 'chat_messages' %}" onclick="sendMessage()">Send</button>
             </div>
         </div>
     </div>
