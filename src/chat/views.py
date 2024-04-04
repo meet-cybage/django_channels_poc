@@ -100,3 +100,19 @@ class ChatMessagesView(View):
         data = json.loads(request.body)
         chat_message = ChatMesssage.objects.create_chat_message(sender, data)
         return JsonResponse({"message": chat_message.message, "sender": sender, "room_id": chat_message.chat_room.id})
+    
+    def get(self, request, *args, **kwargs):
+        page_size = 10
+        room_id = request.GET.get('room_id')
+        start = int(request.GET.get("start", 0))
+        end = start + page_size
+        chat_messages = ChatMesssage.objects.get_specific_room_chat(room_id, request.user.id, start, end)
+
+        if start == 0:
+            chat_messages = list(reversed(chat_messages))
+        else:
+            # when we scroll up at that time we dont require reverse chat messages
+            chat_messages = list(chat_messages)
+        data = {"chat_messages": chat_messages, "end": end}
+
+        return JsonResponse(data)

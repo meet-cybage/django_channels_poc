@@ -2,13 +2,16 @@ from collections import defaultdict
 from django.db.models.functions import Concat
 from django.contrib.contenttypes.models import ContentType
 from django.apps import apps
-from django.db.models import Manager, QuerySet, Q, Case, When, Value, F, IntegerField, Subquery, OuterRef, JSONField, Func
+from django.db.models import Manager, QuerySet, Q, Case, When, Value, F, IntegerField, Subquery, OuterRef, JSONField, Func, BooleanField
 from users.models import User
 
 
 class ChatMessageQuerySet(QuerySet):
 
     def get_chat_message_users(self, content_type, user_id):
+        """
+        Returns a queryset of users having chat with a given user.
+        """
         conditions = [
             When(chat_room__object_id=user_id, then=F('chat_room__room_associated_member_id')),
             When(chat_room__room_associated_member_id=user_id, then=F('chat_room__object_id')),
@@ -43,6 +46,9 @@ class ChatMessageQuerySet(QuerySet):
         return results
     
     def get_chat_message_groups(self, content_type, user_id, models):
+        """
+        Returns a queryset of group chat of a given user.
+        """
         chat_group_members = models.get("chat_group_members")
         user_group_ids = chat_group_members.objects.filter(user_id=user_id).values_list("group_id", flat=True).distinct()
         chat_messages = self.filter(chat_room__content_type=content_type, chat_room__object_id__in=user_group_ids).annotate(
@@ -84,8 +90,24 @@ class ChatMessageQuerySet(QuerySet):
             sender_id=sender
         )
         return chat_message
+    
+    def get_specific_room_chat(self, room_id, user_id, start, end):
+        chat_messages_queryset = self.filter(chat_room_id=room_id).values("id", "chat_room_id", "message", "sender_id").order_by("-created_at")[start: end]
 
+        user_subquery = User.objects.filter(id=OuterRef('sender_id')).annotate(full_name=Concat(F("first_name"), Value(" "), F("last_name"))).values('username', 'full_name')
 
+        chat_messages = chat_messages_queryset.annotate(
+            is_current_user_sender=Case(
+                When(sender_id=user_id, then=True),
+                default=False,
+                output_field=BooleanField()
+            ),
+            sender_username=Subquery(user_subquery.values('username')[:1]),
+            sender_full_name=Subquery(user_subquery.values('full_name')[:1]),
+        )
+        return chat_messages
+
+    
 class ChatMessageManager(Manager):
 
     def get_queryset(self):
@@ -99,3 +121,7 @@ class ChatMessageManager(Manager):
     
     def create_chat_message(self, sender, data):
         return self.get_queryset().create_chat_message(sender, data)
+    
+    def get_specific_room_chat(self, room_id, user_id, start, end):
+        return self.get_queryset().get_specific_room_chat(room_id, user_id, start, end)
+    

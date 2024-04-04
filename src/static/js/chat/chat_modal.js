@@ -242,7 +242,142 @@ function groupUserSelectedCount(checkBox) {
     }
 }
 
-function selectItem(clickedItem) {
+var chatMessages = document.getElementById('chat-messages');
+
+function getScrollChatMessages(){
+    var activeElement = document.querySelector('.selected');
+    const data = {
+        "room_id": activeElement.getAttribute("data-room-id")
+    }
+
+    const groupId = activeElement.getAttribute("data-group-id")
+    const roomUserId = activeElement.getAttribute("data-user-id")
+
+    if (groupId !== null) {
+        data["group_id"] = groupId;
+    }
+
+    if (roomUserId !== null) {
+        data["room_user_id"] = roomUserId;
+    }
+
+    const start = $('#startInput').val()
+
+    if (start !== "null") {
+        data['start'] = start
+        $.ajax({
+            url: "/chat/messages",
+            type: 'GET',
+            contentType: 'application/json',
+            data: data,
+            success: function(responseData) {
+
+                responseData.chat_messages.forEach((item) => {
+
+                    if (item.sender_full_name == " "){
+                        var user = `${item.sender_username}`
+                    }
+                    else{
+                        var user = `${item.sender_username} (${item.sender_full_name})`
+                    }
+                    var newHtml = `
+                        <div class="message-box" data-room-id="${item.chat_room_id}">
+                            <span>${user}:</span>
+                            <p>${item.message}</p>
+                        </div>
+                    `
+
+                    $("#startInput").after(newHtml)
+
+                })
+
+                if (responseData.chat_messages.length === 10) {
+                    $('#startInput').val(responseData.end);
+                }
+                else{
+                    $('#startInput').val("null");
+                }            
+
+            }
+        })
+    }
+
+}
+
+
+// function handleScroll(event) {
+//     if ((event.type === 'scroll' && chatMessages.scrollTop === 0) ||
+//         (event.type === 'wheel' && event.deltaY < 0 && chatMessages.scrollTop === 0)) {
+//         console.log("Scroll at the top");
+//         getScrollChatMessages();
+//     }
+// }
+
+// Define a debounce function
+function debounce(func, delay) {
+    let timeoutId;
+    return function(...args) {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(() => {
+            func.apply(this, args);
+            timeoutId = null;
+        }, delay);
+    };
+}
+
+function handleScroll(event) {
+    if (event.deltaY < 0 || chatMessages.scrollTop === 0) {
+        console.log("Scroll at the top");
+        getScrollChatMessages();
+    }
+}
+
+// Add a debounced event listener for both scroll and wheel events
+const debouncedHandleScroll = debounce(handleScroll, 300); // Adjust the delay as needed
+
+chatMessages.addEventListener('scroll', debouncedHandleScroll);
+chatMessages.addEventListener('wheel', debouncedHandleScroll);
+
+
+async function getChatMessages(chatMessages, data){
+
+    $.ajax({
+        url: "/chat/messages",
+        type: 'GET',
+        contentType: 'application/json',
+        data: data,
+        success: function(data) {
+
+            data.chat_messages.forEach((item) => {
+
+                if (item.sender_full_name == " "){
+                    var user = `${item.sender_username}`
+                }
+                else{
+                    var user = `${item.sender_username} (${item.sender_full_name})`
+                }
+                var newHtml = `
+                    <div class="message-box" data-room-id="${item.chat_room_id}">
+                        <span>${user}:</span>
+                        <p>${item.message}</p>
+                    </div>
+                `
+
+                chatMessages.insertAdjacentHTML("beforeend", newHtml)
+            })
+
+            // $("#startInput").after("<h1>hello</h1>")
+            // $("#startInput").after("<h1>hello1</h1>")
+            $('#startInput').val(data.end);
+
+        }
+    })
+
+}
+
+async function selectItem(clickedItem) {
     // Get the parent ul element
     // var parentList = clickedItem.parentNode;
 
@@ -268,5 +403,36 @@ function selectItem(clickedItem) {
         existingNewElement.remove()
     }
     imgElement.insertAdjacentHTML('afterend', newElement);
+    
+    const data = {
+        "room_id": clickedItem.getAttribute("data-room-id")
+    }
+
+    const groupId = clickedItem.getAttribute("data-group-id")
+    const roomUserId = clickedItem.getAttribute("data-user-id")
+
+    var chatMessages = document.getElementById('chat-messages');
+    chatMessages.innerHTML = '';
+
+    var inputHtml = `
+        <input type="hidden" id="startInput" value="0">
+    `
+    data["start"] = 0
+    chatMessages.insertAdjacentHTML("beforeend", inputHtml)
+
+    if (groupId !== null) {
+        data["group_id"] = groupId;
+    }
+
+    if (roomUserId !== null) {
+        data["room_user_id"] = roomUserId;
+    }
+    
+    await getChatMessages(chatMessages, data);
+    // chatMessages.scrollTop = chatMessages.scrollHeight;
+    setTimeout(() => {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 100); 
+
 
 }
