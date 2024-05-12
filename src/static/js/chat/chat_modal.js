@@ -1,4 +1,7 @@
 
+var chatSocket = null;
+var roomName;
+
 async function fetchUsersData(url) {
     var normalUserTags = "";
     var groupUserTags = "";
@@ -386,12 +389,41 @@ async function selectItem(clickedItem) {
 
     // If found, remove the "selected" class
     if (activeElement) {
+        if (chatSocket){
+            chatSocket.close()
+        }
         activeElement.classList.remove("selected");
     }
 
     // Add the "selected" class to the clicked li element
     clickedItem.classList.add("selected");
+
+    roomName = `room_${clickedItem.getAttribute("data-room-id")}`
+    chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/chat/'
+        + roomName
+        + '/'
+    );
     
+    chatSocket.onmessage = function (event) {
+        // Handle incoming messages here, or pass them to the global handler
+        var data = JSON.parse(event.data)
+        var chatMessages = document.getElementById('chat-messages');
+        var messageInput = document.getElementById('message-input');
+        var newMessage = document.createElement('div');
+        newMessage.className = 'message-box';
+        newMessage.setAttribute('data-room-id', data.room_id);
+        newMessage.innerHTML = '<span>User:</span><p>' + data.message + '</p>';
+        chatMessages.appendChild(newMessage);
+
+        // Clear the input field
+        messageInput.value = '';
+
+        // Scroll to the bottom of the chat messages
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
     var spanText = clickedItem.querySelector('span').innerText;
 
     var existingSpan = document.querySelector('.nav-right-span');

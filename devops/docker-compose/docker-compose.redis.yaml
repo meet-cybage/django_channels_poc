@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.2.4
+    container_name: redis
+    command: redis-server
+    ports:
+      - "6379:6379"
+    # command: redis-server /usr/local/etc/redis/redis.conf
+    # volumes:
+    #   -./data/redis/data:/data
+    #   -./config/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - channels
+
+  redisinsight:
+    image: redislabs/redisinsight:1.14.0
+    container_name: redisinsight
+    ports:
+      - "8001:8001"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_CONNECTION_HOST=redis
+      - REDIS_CONNECTION_PORT=6379
+    networks:
+      - channels
+
+
+networks:
+  channels:
+    external: true

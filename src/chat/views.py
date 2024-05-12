@@ -88,7 +88,7 @@ class ChatUsersAndGroups(View):
         }
         users_data = ChatMesssage.objects.get_chat_message_users(user_content_type, request.user.id)
         groups_data = ChatMesssage.objects.get_chat_message_groups(group_content_type, request.user.id, models)
-        data = {"users_data": users_data, "groups_data": groups_data}
+        data = {"users_data": users_data, "groups_data": groups_data, "logged_user_id": self.request.user.id}
         return JsonResponse(data)
         # return render(request, "chat/chat_users_and_groups.html", context={"users": users})
 
